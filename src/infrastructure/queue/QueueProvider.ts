@@ -1,4 +1,4 @@
-export interface QueueJob<T = any> {
+export interface QueueJob<T = unknown> {
   id?: string;
   data: T;
   opts?: {
@@ -10,9 +10,9 @@ export interface QueueJob<T = any> {
 
 export interface QueueProvider {
   addJob<T>(queueName: string, job: QueueJob<T>): Promise<void>;
-  process<T>(
+  process(
     queueName: string,
-    handler: (job: T) => Promise<void>,
+    handler: (job: unknown) => Promise<void>,
     concurrency?: number
   ): Promise<void>;
   close(): Promise<void>;

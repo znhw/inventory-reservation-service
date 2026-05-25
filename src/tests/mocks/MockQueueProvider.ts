@@ -1,7 +1,7 @@
-import { QueueProvider, QueueJob } from '../infrastructure/queue/QueueProvider';
+import { QueueProvider, QueueJob } from '../../infrastructure/queue/QueueProvider';
 
 interface RegisteredHandler {
-  handler: (data: any) => Promise<void>;
+  handler: (data: unknown) => Promise<void>;
   concurrency: number;
 }
 
@@ -15,7 +15,7 @@ export class MockQueueProvider implements QueueProvider {
   private handlers: Map<string, RegisteredHandler> = new Map();
   private delayedJobs: Map<string, { queueName: string; job: QueueJob }[]> =
     new Map();
-  private processedJobs: { queueName: string; data: any }[] = [];
+  private processedJobs: { queueName: string; data: unknown }[] = [];
   private failNextJob = false;
 
   reset(): void {
@@ -31,7 +31,6 @@ export class MockQueueProvider implements QueueProvider {
 
   async addJob<T>(queueName: string, job: QueueJob<T>): Promise<void> {
     if (job.opts?.delay && job.opts.delay > 0) {
-      // Store delayed jobs without executing
       if (!this.delayedJobs.has(queueName)) {
         this.delayedJobs.set(queueName, []);
       }
@@ -51,9 +50,9 @@ export class MockQueueProvider implements QueueProvider {
     this.processedJobs.push({ queueName, data: job.data });
   }
 
-  async process<T>(
+  async process(
     queueName: string,
-    handler: (job: T) => Promise<void>,
+    handler: (job: unknown) => Promise<void>,
     concurrency: number = 1
   ): Promise<void> {
     this.handlers.set(queueName, { handler, concurrency });

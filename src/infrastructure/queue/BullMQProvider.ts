@@ -88,9 +88,9 @@ export class BullMQProvider implements QueueProvider {
     }
   }
 
-  async process<T>(
+  async process(
     queueName: string,
-    handler: (job: T) => Promise<void>,
+    handler: (job: unknown) => Promise<void>,
     concurrency: number = 1
   ): Promise<void> {
     try {
@@ -101,7 +101,7 @@ export class BullMQProvider implements QueueProvider {
 
       const worker = new Worker(
         queueName,
-        async (job: Job<T>) => {
+        async (job: Job<unknown>) => {
           this.logger.info(
             { queueName, jobId: job.id, data: job.data },
             'Processing job'

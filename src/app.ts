@@ -71,7 +71,7 @@ export async function createApp(config: Config): Promise<AppComponents> {
   await queue.process(
     'reservations',
     async (jobData) => {
-      await reservationWorker.processReservation(jobData);
+      await reservationWorker.processReservation(jobData as Parameters<typeof reservationWorker.processReservation>[0]);
     },
     config.queueConcurrency
   );
@@ -79,7 +79,7 @@ export async function createApp(config: Config): Promise<AppComponents> {
   await queue.process(
     'reservation-expiry',
     async (jobData) => {
-      await expiryWorker.processExpiry(jobData);
+      await expiryWorker.processExpiry(jobData as Parameters<typeof expiryWorker.processExpiry>[0]);
     },
     config.queueConcurrency
   );
